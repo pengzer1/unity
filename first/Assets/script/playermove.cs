@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class playermove : MonoBehaviour
 {
+    public GameManager GameManager;
     public float maxSpeed;
     public float jumpPower;
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
+    CapsuleCollider2D capsulecollider;
 
     void Awake()
     {
@@ -94,6 +96,8 @@ public class playermove : MonoBehaviour
 
     void OnDamaged(Vector2 targetPos)
     {
+        // Health Down
+        GameManager.health--;
         //layer ����
         gameObject.layer = 9;
 
@@ -119,19 +123,43 @@ public class playermove : MonoBehaviour
         spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 
+    public void OnDie()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        spriteRenderer.flipY = true;
+        capsulecollider.isTrigger = true;
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("item"))
         {
             //점수
+            bool isBronze = collision.gameObject.name.Contains("bronzecoin");
+            bool isSilver = collision.gameObject.name.Contains("silvercoin");
+            bool isGold = collision.gameObject.name.Contains("goldcoin");
 
+            if (isBronze)
+                GameManager.stagePoint += 50;
+            else if (isSilver)
+                GameManager.stagePoint += 100;
+            else if (isGold)
+                GameManager.stagePoint += 200;
             // 동전 사라짐
             collision.gameObject.SetActive(false);
+        }
+        else if (collision.gameObject.tag == "Finish")
+        {
+            //Next Stage
+            GameManager.NextStage();
         }
     }
 
     void OnAttack(Transform enemy)
     {
+        GameManager.stagePoint += 100;
+
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
         monstermove enemyMove = enemy.GetComponent<monstermove>();
