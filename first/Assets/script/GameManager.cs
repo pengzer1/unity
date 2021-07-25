@@ -21,19 +21,21 @@ public class GameManager : MonoBehaviour
     }
     public void HealthDown()
     {
-        if (health > 0)
+        if (health > 1)
             health--;
         else
         {
             //죽는 이펙트
             player.OnDie();
+            //죽는 UI
+            Debug.Log("죽었습니다!");
         }
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            health--;
+            HealthDown();
 
             //player 원위치
             collision.attachedRigidbody.velocity = Vector2.zero;

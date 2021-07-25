@@ -657,7 +657,7 @@ MonoBehaviour:
   stagePoint: 0
   stageIndex: 0
   health: 3
-  player: {fileID: 0}
+  player: {fileID: 1018282755}
 --- !u!4 &562944260
 Transform:
   m_ObjectHideFlags: 0

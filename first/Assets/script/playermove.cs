@@ -97,7 +97,7 @@ public class playermove : MonoBehaviour
     void OnDamaged(Vector2 targetPos)
     {
         // Health Down
-        GameManager.health--;
+        GameManager.HealthDown();
         //layer ����
         gameObject.layer = 9;
 
