@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,10 +12,30 @@ public class GameManager : MonoBehaviour
     public int stageIndex;
     public int health;
     public playermove player;
+    public GameObject[] Stages;
+    public Image[] UIhealth;
+    public Text UIPoint;
+    public Text UIStage;
+    public GameObject RestartBtn;
+
     // Start is called before the first frame update
     public void NextStage()
     {
-        stageIndex++;
+        //Stage 변경
+        if (stageIndex < Stages.Length - 1)
+        {
+            Stages[stageIndex].SetActive(false);
+            stageIndex++;
+            Stages[stageIndex].SetActive(true);
+            PlayerReposition();
+        }
+        else
+        {//게임 클리어
+         //시간 정지
+            Time.timeScale = 0;
+            //결과
+            Debug.Log("게임 클리어!");
+        }
 
         totalPoint += stagePoint;
         stagePoint = 0;
@@ -35,12 +56,19 @@ public class GameManager : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            if (health > 1)
+            {
+                //player 원위치
+                PlayerReposition();
+            }
             HealthDown();
-
-            //player 원위치
-            collision.attachedRigidbody.velocity = Vector2.zero;
-            collision.transform.position = new Vector3(-7.5f, 2.5f, -1);
         }
+    }
+
+    void PlayerReposition()
+    {
+        player.VelocityZero();
+        player.transform.position = new Vector3(-7.5f, 2.5f, -1);
     }
     void Start()
     {

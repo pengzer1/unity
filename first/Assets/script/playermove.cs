@@ -17,6 +17,7 @@ public class playermove : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        capsulecollider = GetComponent<CapsuleCollider2D>();
     }
 
     void Update()
@@ -129,6 +130,11 @@ public class playermove : MonoBehaviour
         spriteRenderer.flipY = true;
         capsulecollider.isTrigger = true;
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
