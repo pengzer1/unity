@@ -5,12 +5,20 @@ using UnityEngine;
 public class playermove : MonoBehaviour
 {
     public GameManager GameManager;
+    public AudioClip audioJump;
+    public AudioClip audioAttack;
+    public AudioClip audioDamaged;
+    public AudioClip audioItem;
+    public AudioClip audioDie;
+    public AudioClip audioFinish;
     public float maxSpeed;
     public float jumpPower;
+
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
     CapsuleCollider2D capsulecollider;
+    AudioSource audioSource;
 
     void Awake()
     {
@@ -18,6 +26,7 @@ public class playermove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -27,6 +36,7 @@ public class playermove : MonoBehaviour
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
+            PlaySound("JUMP");
         }
 
         //Stop Speed
@@ -88,10 +98,14 @@ public class playermove : MonoBehaviour
             if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
             {
                 OnAttack(collision.transform);
+                PlaySound("ATTACK");
             }
             else
+            {
                 //데미지
                 OnDamaged(collision.transform.position);
+                PlaySound("DAMAGED");
+            }
         }
     }
 
@@ -130,6 +144,7 @@ public class playermove : MonoBehaviour
         spriteRenderer.flipY = true;
         capsulecollider.isTrigger = true;
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        PlaySound("DIE");
     }
 
     public void VelocityZero()
@@ -146,6 +161,8 @@ public class playermove : MonoBehaviour
             bool isSilver = collision.gameObject.name.Contains("silvercoin");
             bool isGold = collision.gameObject.name.Contains("goldcoin");
 
+            PlaySound("ITEM");
+
             if (isBronze)
                 GameManager.stagePoint += 50;
             else if (isSilver)
@@ -159,6 +176,8 @@ public class playermove : MonoBehaviour
         {
             //Next Stage
             GameManager.NextStage();
+
+            PlaySound("FINISH");
         }
     }
 
@@ -170,5 +189,36 @@ public class playermove : MonoBehaviour
 
         monstermove enemyMove = enemy.GetComponent<monstermove>();
         enemyMove.OnDamaged();
+    }
+
+    void PlaySound(string action)
+    {
+        switch (action)
+        {
+            case "JUMP":
+                audioSource.clip = audioJump;
+                audioSource.Play();
+                break;
+            case "ATTACK":
+                audioSource.clip = audioAttack;
+                audioSource.Play();
+                break;
+            case "DAMAGED":
+                audioSource.clip = audioDamaged;
+                audioSource.Play();
+                break;
+            case "ITEM":
+                audioSource.clip = audioItem;
+                audioSource.Play();
+                break;
+            case "DIE":
+                audioSource.clip = audioDie;
+                audioSource.Play();
+                break;
+            case "FINISH":
+                audioSource.clip = audioFinish;
+                audioSource.Play();
+                break;
+        }
     }
 }
